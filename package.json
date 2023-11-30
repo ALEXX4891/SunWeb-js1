@@ -1,0 +1,22 @@
+{
+  "name": "sunweb-js1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ALEXX4891/SunWeb-js1.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ALEXX4891/SunWeb-js1/issues"
+  },
+  "homepage": "https://github.com/ALEXX4891/SunWeb-js1#readme",
+  "devDependencies": {
+    "eslint": "^8.54.0"
+  }
+}

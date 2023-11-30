@@ -84,3 +84,66 @@ const staffs = [
 
 
 
+
+let modal = document.getElementById('modal');
+
+// let modal = document.querySelector('#modal');
+
+let form = document.querySelector('form')
+let saveBtn = document.querySelector('.save-modal')
+// let filter = document.getElementById('filter');
+// let tableBody = document.getElementById('table-body');
+// let male = document.getElementById('male');
+// let female = document.getElementById('female');
+// let staffName = document.getElementById('staff-name');
+// let staffDate = document.getElementById('staff-date');
+// let staffSalary = document.getElementById('staff-salary');
+// let staffAge = document.getElementById('staff-age');
+// let staffSkills = document.getElementById('staff-skills');
+let btnOpenModal = document.querySelector('.open-modal');
+let btnCloseModal = document.querySelector('.close-modal');
+
+
+function modalToOpen() {
+    modal.classList.add('show');
+}
+
+function modalToClose() {
+    modal.classList.remove('show');
+}
+
+let formData;
+let data;
+
+function saveForm() {
+    formData = new FormData(form);
+    data = Object.fromEntries(formData.entries());
+    console.log(data)
+    modal.classList.remove('show');
+}
+
+saveBtn.addEventListener('click', saveForm);
+btnOpenModal.addEventListener('click', modalToOpen);
+btnCloseModal.addEventListener('click', modalToClose);
+// let formData = new FormData(form);
+// let data = Object.entries(formData.entries());
+// let save = e
+
+
+
+// modal.onsubmit = async (e) => {
+//     e.preventDefault();
+
+//     let response = await fetch('#', {
+//       method: 'POST',
+//       body: new FormData(modal)
+//     });
+
+//     let result = await response.json();
+
+//     console.log(result.message);
+//   };
+
+
+
+
