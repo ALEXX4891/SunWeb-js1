@@ -1,97 +1,138 @@
-const staffs = [
-    {
-        id: 1,
-        name: "John",
-        age: 30,
-        gender: "male",
-        salary: 5000,
-        married: false,
-        skills: ["html", "css", "js"],
-        employmentAt: "2020-01-01"
-    },
-    {
-        id: 2,
-        name: "Jane",
-        age: 25,
-        gender: "female",
-        salary: 4000,
-        married: true,
-        skills: ["html", "css", "js", "php"],
-        employmentAt: "2023-06-21"
-    },
-    {
-        id: 3,
-        name: "Bob",
-        age: 35,
-        gender: "male",
-        salary: 6000,
-        married: false,
-        skills: ["html", "css", "js", "python"],
-        employmentAt: "2021-03-15"
-    },
-    {
-        id: 4,
-        name: "Alice",
-        age: 28,
-        gender: "female",
-        salary: 4500,
-        married: true,
-        skills: ["html", "css"],
-        employmentAt: "2022-09-01"
-    },
-    {
-        id: 5,
-        name: "Charlie",
-        age: 40,
-        gender: "male",
-        salary: 7000,
-        married: true,
-        skills: ["html", "css", "js", "python", "java"],
-        employmentAt: "2020-07-10"
-    },
-    {
-        id: 6,
-        name: "Emily",
-        age: 32,
-        gender: "female",
-        salary: 5000,
-        married: true,
-        skills: ["js", "C++"],
-        employmentAt: "2023-02-28"
-    },
-    {
-        id: 7,
-        name: "David",
-        age: 29,
-        gender: "male",
-        salary: 5500,
-        married: true,
-        skills: ["html", "css", "js"],
-        employmentAt: "2021-11-05"
-    },
-    {
-        id: 8,
-        name: "Sophia",
-        age: 27,
-        gender: "female",
-        salary: 4000,
-        married: true,
-        skills: ["html", "css", "js"],
-        employmentAt: "2022-08-15"
-    },
-    {
-        id: 9,
-        name: "Jane",
-        age: 55,
-        gender: "female",
-        salary: 4500,
-        married: false,
-        skills: ["css", "js", "php"],
-        employmentAt: "2020-05-22"
-    }
-]
+// const staffs = [
+//     {
+//         id: 1,
+//         name: "John",
+//         age: 30,
+//         gender: "male",
+//         salary: 5000,
+//         married: false,
+//         skills: ["html", "css", "js"],
+//         employmentAt: "2020-01-01"
+//     },
+//     {
+//         id: 2,
+//         name: "Jane",
+//         age: 25,
+//         gender: "female",
+//         salary: 4000,
+//         married: true,
+//         skills: ["html", "css", "js", "php"],
+//         employmentAt: "2023-06-21"
+//     },
+//     {
+//         id: 3,
+//         name: "Bob",
+//         age: 35,
+//         gender: "male",
+//         salary: 6000,
+//         married: false,
+//         skills: ["html", "css", "js", "python"],
+//         employmentAt: "2021-03-15"
+//     },
+//     {
+//         id: 4,
+//         name: "Alice",
+//         age: 28,
+//         gender: "female",
+//         salary: 4500,
+//         married: true,
+//         skills: ["html", "css"],
+//         employmentAt: "2022-09-01"
+//     },
+//     {
+//         id: 5,
+//         name: "Charlie",
+//         age: 40,
+//         gender: "male",
+//         salary: 7000,
+//         married: true,
+//         skills: ["html", "css", "js", "python", "java"],
+//         employmentAt: "2020-07-10"
+//     },
+//     {
+//         id: 6,
+//         name: "Emily",
+//         age: 32,
+//         gender: "female",
+//         salary: 5000,
+//         married: true,
+//         skills: ["js", "C++"],
+//         employmentAt: "2023-02-28"
+//     },
+//     {
+//         id: 7,
+//         name: "David",
+//         age: 29,
+//         gender: "male",
+//         salary: 5500,
+//         married: true,
+//         skills: ["html", "css", "js"],
+//         employmentAt: "2021-11-05"
+//     },
+//     {
+//         id: 8,
+//         name: "Sophia",
+//         age: 27,
+//         gender: "female",
+//         salary: 4000,
+//         married: true,
+//         skills: ["html", "css", "js"],
+//         employmentAt: "2022-08-15"
+//     },
+//     {
+//         id: 9,
+//         name: "Jane",
+//         age: 55,
+//         gender: "female",
+//         salary: 4500,
+//         married: false,
+//         skills: ["css", "js", "php"],
+//         employmentAt: "2020-05-22"
+//     }
+// ]
 
+
+const baseUrl = 'https://api.slingacademy.com/v1/sample-data';
+
+// let staffs = [];
+let responce;
 let staffsListForRender = [];
+let staffsList2;
+
+const staffsList = async function getStaffsFromDB(limit=10, offset=0) {
+    const url = `/users?offset=${offset}&limit=${limit}`;
+    responce = await fetch(baseUrl + url);
+    let data = await responce.json();
+    // console.log(staffsList.users);
+    if (!responce.ok) {
+        console.log("Данные на сервере отсутсуют");
+        return null;
+    } 
+    console.log(data.users)
+    staffsList2 = [...data.users];
+    // console.log(staffsList2)
+    preRenderTableOfStaff(staffsList2);
+    console.log(staffsListForRender)
+    
+    renderTableOfStaff(staffsListForRender);
+
+
+    // return staffsListForRender;
+
+    // staffsList = [];
+}
+
+// await getStaffsFromDB();
+let limit = 10;
+let offset = 0;
+// await getStaffsFromDB(limit, offset);
+staffsList(limit, offset);
+
+
+// if (staffsList) {
+//     staffsListForRender = [...staffsList];    
+//     console.log(staffsListForRender)
+// }
 
 const modal = document.getElementById('modal');
 const filterInput = document.getElementById('filter');
@@ -120,32 +161,30 @@ function getStaffItem(staffObj) {
     const $tableRow = document.createElement("tr"),
         $tableDataId = document.createElement("td"),
         $tableDataName = document.createElement("td"),
-        $tableDataSkills = document.createElement("td"),
-        $tableDataDate = document.createElement("td"),
-        $tableDataGender = document.createElement("td"),
+        $tableDataLastName = document.createElement("td"),
         $tableDataAge = document.createElement("td"),
-        $tableDataSalary = document.createElement("td"),
+        $tableDataGender = document.createElement("td"),
+        $tableDataState = document.createElement("td"),
+        $tableDataStreet = document.createElement("td"),
         $tableDeleteStaff = document.createElement("td"),
         $deleteButton = document.createElement("button");
         $deleteButton.classList.add('btn-close');
-
   
     $tableDataId.textContent = staffObj.id;
-    $tableDataName.textContent = staffObj.name;
-    $tableDataSkills.textContent = staffObj.skills;
-    $tableDataDate.textContent = staffObj.date;
-    $tableDataGender.textContent = staffObj.gender;
+    $tableDataName.textContent = staffObj.first_name;
+    $tableDataLastName.textContent = staffObj.last_name;
     $tableDataAge.textContent = staffObj.age;
-    $tableDataSalary.textContent = staffObj.salary;
-    // tableDeleteStaff.textContent = staffObj.salary;
+    $tableDataGender.textContent = staffObj.gender;
+    $tableDataState.textContent = staffObj.state;
+    $tableDataStreet.textContent = staffObj.street;
 
     $tableRow.append($tableDataId);
     $tableRow.append($tableDataName);
-    $tableRow.append($tableDataSkills);
-    $tableRow.append($tableDataDate);
-    $tableRow.append($tableDataGender);
+    $tableRow.append($tableDataLastName);
     $tableRow.append($tableDataAge);
-    $tableRow.append($tableDataSalary);
+    $tableRow.append($tableDataGender);
+    $tableRow.append($tableDataState);
+    $tableRow.append($tableDataStreet);
     $tableDeleteStaff.append($deleteButton)
     $tableRow.append($tableDeleteStaff);
 
@@ -179,13 +218,12 @@ function onDelete({ staffObj, element }) {
 function preRender(staffObj) {
     return {
     id: staffObj.id,
-    name: staffObj.name,
-    age: +staffObj.age,
+    first_name: staffObj.first_name,
+    last_name: staffObj.last_name,
+    age: new Date().getFullYear() - new Date(staffObj.date_of_birth).getFullYear(),
     gender: staffObj.gender,
-    salary: +staffObj.salary,
-    skills: staffObj.skills,
-    date: staffObj.employmentAt,
-    // married: staffObj.married,
+    state: staffObj.state,
+    street: staffObj.street,
     };
 }
 
@@ -195,7 +233,6 @@ function preRenderTableOfStaff(arr) {
         staffsListForRender.push(preRender(item));
     });     
 }
-preRenderTableOfStaff(staffs);
 
 // запуск рендерa:
 function renderTableOfStaff(arr) {
@@ -210,8 +247,6 @@ function renderTableOfStaff(arr) {
         getStaffItem(staffObj)
     });     
 }
-
-renderTableOfStaff(staffsListForRender);
 
 // Добавление строки с новым пользователем:
 function saveForm() {
@@ -228,7 +263,7 @@ function saveForm() {
 // фильтрация массива сотрудников:
 function filterTable(filterInput, arr) {
     return arr.filter((oneStaff) =>
-    oneStaff['name'].toLowerCase().includes(filterInput.value.trim().toLowerCase())
+    oneStaff['first_name'].toLowerCase().includes(filterInput.value.trim().toLowerCase())
     );
 }
 
@@ -239,7 +274,7 @@ filterInput.addEventListener("input", () => {
 // СОРТИРОВКА:
 const ageSortTableBtn = document.querySelector('[data-sort="age"]');
 ageSortTableBtn.style.cursor = 'pointer';
-const salarySortTableBtn = document.querySelector('[data-sort="salary"]');
+const salarySortTableBtn = document.querySelector('[data-sort="last_name"]');
 salarySortTableBtn.style.cursor = 'pointer';
 const idSortTableBtn = document.querySelector('[data-sort="id"]');
 idSortTableBtn.style.cursor = 'pointer';
