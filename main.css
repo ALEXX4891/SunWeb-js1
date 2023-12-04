@@ -1,0 +1,9 @@
+.show {
+    display: block;
+}
+
+.btn-close {
+    width: 10px;
+    height: 10px;
+    background-image: url(./crosslinear_106242.svg);
+}
