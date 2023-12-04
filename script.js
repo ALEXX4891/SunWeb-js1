@@ -78,25 +78,42 @@ const staffs = [
         married: true,
         skills: ["html", "css", "js"],
         employmentAt: "2022-08-15"
+    },
+    {
+        id: 9,
+        name: "Jane",
+        age: 55,
+        gender: "female",
+        salary: 4500,
+        married: false,
+        skills: ["css", "js", "php"],
+        employmentAt: "2020-05-22"
     }
 ]
 
-
-
 const copyStaffs = [...staffs];
 let staffsListForRender = [];
-// let arrayOfStaffs = [];
-
 
 const modal = document.getElementById('modal');
-
+const filterInput = document.getElementById('filter');
 const tableBody = document.getElementById('table-body');
 const form = document.querySelector('form');
 const saveBtn = document.querySelector('.save-modal');
-
 const btnOpenModal = document.querySelector('.open-modal');
-const btnCloseModal = document.querySelector('.close-modal');
+let formData;
+let data;
 
+saveBtn.addEventListener('click', saveForm);
+btnOpenModal.addEventListener('click', modalToOpen);
+
+let modalCloseBntList = document.querySelectorAll('[data-bs-dismiss="modal"]');
+addEventListenerList(modalCloseBntList, 'click', modalToClose);
+
+function addEventListenerList(className, event, fn) {
+    for (let i = 0; i < className.length; i++) {
+        className[i].addEventListener(event, fn);
+    }
+}
 
 function modalToOpen() {
     modal.classList.add('show');
@@ -105,23 +122,6 @@ function modalToOpen() {
 function modalToClose() {
     modal.classList.remove('show');
 }
-
-let formData;
-let data;
-
-// data:
-// age:"545"
-// employmentAt:"2023-12-02"
-// gender:"female"
-// name:"папап"
-// salary:"45454"
-// skills:"пвпвппавпв"
-
-
-saveBtn.addEventListener('click', saveForm);
-btnOpenModal.addEventListener('click', modalToOpen);
-btnCloseModal.addEventListener('click', modalToClose);
-
 
 // получаем строку таблицы сотрудника и выводим её в таблицу:
 function getStaffItem(staffObj) {
@@ -133,6 +133,10 @@ function getStaffItem(staffObj) {
         $tableDataGender = document.createElement("td"),
         $tableDataAge = document.createElement("td"),
         $tableDataSalary = document.createElement("td");
+        $tableDeleteStaff = document.createElement("td");
+        $deleteButton = document.createElement("button");
+        $deleteButton.classList.add('btn-close');
+
   
     $tableDataId.textContent = staffObj.id;
     $tableDataName.textContent = staffObj.name;
@@ -141,16 +145,8 @@ function getStaffItem(staffObj) {
     $tableDataGender.textContent = staffObj.gender;
     $tableDataAge.textContent = staffObj.age;
     $tableDataSalary.textContent = staffObj.salary;
+    // tableDeleteStaff.textContent = staffObj.salary;
 
-
-
-    // $tableDataId
-    // $tableDataName
-    // $tableDataDate
-    // $tableDataGender
-    // $tableDataAge
-    // $tableDataSalary
-  
     $tableRow.append($tableDataId);
     $tableRow.append($tableDataName);
     $tableRow.append($tableDataSkills);
@@ -158,21 +154,45 @@ function getStaffItem(staffObj) {
     $tableRow.append($tableDataGender);
     $tableRow.append($tableDataAge);
     $tableRow.append($tableDataSalary);
+    $tableDeleteStaff.append($deleteButton)
+    $tableRow.append($tableDeleteStaff);
 
     tableBody.append($tableRow);
-    // table.append(tableBody);
+
+        // УДАЛЕНИЕ:
+
+    // присваеваем id студента кнопке:
+    $deleteButton.setAttribute("id", staffObj.id);
+
+    // добавляем обработчик на кнопку - удаление задачи
+    $deleteButton.addEventListener("click", function () {
+        onDelete({ staffObj, element: $tableRow });
+    });
+
+    $tableRow.setAttribute("id", staffObj.id);
+    // console.log(staffObj.name);
+    // console.log($tableRow.id);
+
+    return $tableRow;
 }
 
+function onDelete({ staffObj, element }) {
+    if (!confirm(`Вы точно хотите удалить сотрудника ${staffObj.name} c ID № ${staffObj.id}?`)) {
+      return;
+    }
+    element.remove();
 
-// for (const staffObj of copyStaffs) {
-//     getStaffItem(staffObj);
-// }
+    // fetch(`http://localhost:3000/api/students/${staffObj.id}`, {
+    //   method: "DELETE",
+    // });
+}
 
+let staffsObjForRender = {};
 
 // пререндер нужен нам для обработки и обработки даннныхЖ
-let staffsObjForRender = {};
+// Пререндер объекта:
 function preRender(staffObj) {
-    staffsObjForRender = {
+    return staffsObjForRender = {
     id: staffObj.id,
     name: staffObj.name,
     age: +staffObj.age,
@@ -183,83 +203,99 @@ function preRender(staffObj) {
     // married: staffObj.married,
     };
 }
+let copyList =[];
 
-
-staffsListForRender = [];
 // запуск пререндера таблицы
-
 function preRenderTableOfStaff(arr) {
-    arr.forEach(item => {
+
+    return arr.forEach(item => {
         preRender(item)
-        // staffsListForRender = []
         staffsListForRender.push(staffsObjForRender);
     });     
 }
 preRenderTableOfStaff(copyStaffs);
 
-
 // запуск рендерa:
 function renderTableOfStaff(arr) {
-    formData = new FormData(form);
-    preRenderTableOfStaff(copyStaffs)
-    arr.forEach(item => {
-        getStaffItem(item)
+    tableBody.innerHTML = ""; // очищаем тело таблицы
+    let copyList = [...arr]; // создаем копию массива
+
+
+    if (filterInput.value.trim() !== "") {
+        copyList = filterTable(filterInput, copyList);
+    }
+
+    return copyList.forEach(staffObj => {
+        preRender(staffObj)        
+        getStaffItem(staffObj)
     });     
 }
 
 renderTableOfStaff(staffsListForRender);
 
-
-
+// Добавление строки с новым пользователем:
 function saveForm() {
+    tableBody.innerHTML = '';
+    // modal.classList.remove('show');
+    formData = new FormData(form);
     data = Object.fromEntries(formData.entries());
-    console.log(data)
     //присваиваем id новому сотруднику:
     data.id = Math.max.apply(null, staffsListForRender.map(a => a.id)) + 1; 
-    // console.log(data)
-    data.date = data.employmentAt;
-    data.salary = +data.salary;
-    delete data.employmentAt;
-    modal.classList.remove('show');
-    // staffsListForRender.push(data);
-    // preRender(data);
-    staffsListForRender.push(data)
-    tableBody.innerHTML = '';
-    preRenderTableOfStaff(staffsListForRender)
+    preRender(data);
+    staffsListForRender.push(staffsObjForRender)
     renderTableOfStaff(staffsListForRender);
-
-    // for (const staffObj of staffsListForRender) {
-    //     getStaffItem(staffObj);
-    // }
-    // getStaffItem(staffsListForRender);
-    // console.log(staffsListForRender);
 }
 
-// let str = '';
-// function filterList(str) {
-//     staffsListForRender.filter((el) => el.some(str));
+// ФИЛЬТРАЦИЯ:
+let filterdTable = [];
 
-//     for (const staffObj of staffsListForRender) {
-//         getStaffItem(staffObj);
-//     }
-    
-// }
-
-function filterTable(param, arr, str) {
+// фильтрация массива сотрудников:
+function filterTable(filterInput, arr) {
     return arr.filter((oneStaff) =>
-      oneStaff[param].toLowerCase().includes(str)
-    //   oneStaff[param].toLowerCase().includes(col.value.trim().toLowerCase())
-
+    oneStaff['name'].toLowerCase().includes(filterInput.value.trim().toLowerCase())
     );
 }
 
-let res = filterTable('name', staffsListForRender, 'jane');
+filterInput.addEventListener("input", () => {
+    renderTableOfStaff(staffsListForRender);
+});
 
-function sortTable(arr, property, sortDirection) {
-    arr.sort((a, b) =>
+// СОРТИРОВКА:
+
+let ageSortTableBtn = document.querySelector('[data-sort="age"]');
+ageSortTableBtn.style.cursor = 'pointer';
+let salarySortTableBtn = document.querySelector('[data-sort="salary"]');
+salarySortTableBtn.style.cursor = 'pointer';
+let idSortTableBtn = document.querySelector('[data-sort="id"]');
+idSortTableBtn.style.cursor = 'pointer';
+
+let sortDirection = true;
+
+const sortArr = (arr, property, sortDirection) => {
+  arr.sort((a, b) =>
     (sortDirection ? a[property] < b[property] : a[property] > b[property])
       ? -1
       : 1
   );
-  renderStudentsTable(arr);
-}
+  renderTableOfStaff(arr);
+};
+
+ageSortTableBtn.addEventListener("click", () => {
+    sortDirection = !sortDirection;
+    sortArr(staffsListForRender, "age", sortDirection);
+});
+
+idSortTableBtn.addEventListener("click", () => {
+    sortDirection = !sortDirection;
+    sortArr(staffsListForRender, "id", sortDirection);
+});
+
+salarySortTableBtn.addEventListener("click", () => {
+    sortDirection = !sortDirection;
+    sortArr(staffsListForRender, "salary", sortDirection);
+});
+
+
+
+
+
