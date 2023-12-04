@@ -99,7 +99,6 @@ const tableBody = document.getElementById('table-body');
 const form = document.querySelector('form');
 const saveBtn = document.querySelector('.save-modal');
 const btnOpenModal = document.querySelector('.open-modal');
-let data;
 
 saveBtn.addEventListener('click', saveForm);
 btnOpenModal.addEventListener('click', modalToOpen);
@@ -218,7 +217,7 @@ renderTableOfStaff(staffsListForRender);
 function saveForm() {
     tableBody.innerHTML = '';
     const formData = new FormData(form);
-    data = Object.fromEntries(formData.entries());
+    const data = Object.fromEntries(formData.entries());
     //присваиваем id новому сотруднику:
     data.id = Math.max.apply(null, staffsListForRender.map(a => a.id)) + 1; 
     staffsListForRender.push(preRender(data));
