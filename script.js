@@ -91,7 +91,6 @@ const staffs = [
     }
 ]
 
-const copyStaffs = [...staffs];
 let staffsListForRender = [];
 
 const modal = document.getElementById('modal');
@@ -100,20 +99,14 @@ const tableBody = document.getElementById('table-body');
 const form = document.querySelector('form');
 const saveBtn = document.querySelector('.save-modal');
 const btnOpenModal = document.querySelector('.open-modal');
-let formData;
 let data;
 
 saveBtn.addEventListener('click', saveForm);
 btnOpenModal.addEventListener('click', modalToOpen);
 
-let modalCloseBntList = document.querySelectorAll('[data-bs-dismiss="modal"]');
-addEventListenerList(modalCloseBntList, 'click', modalToClose);
-
-function addEventListenerList(className, event, fn) {
-    for (let i = 0; i < className.length; i++) {
-        className[i].addEventListener(event, fn);
-    }
-}
+// находим кнопки закрытия модалки и навешиваем событие закрытия
+document.querySelectorAll('[data-bs-dismiss="modal"]')
+    .forEach(btn => { btn.addEventListener('click', modalToClose); });
 
 function modalToOpen() {
     modal.classList.add('show');
@@ -132,8 +125,8 @@ function getStaffItem(staffObj) {
         $tableDataDate = document.createElement("td"),
         $tableDataGender = document.createElement("td"),
         $tableDataAge = document.createElement("td"),
-        $tableDataSalary = document.createElement("td");
-        $tableDeleteStaff = document.createElement("td");
+        $tableDataSalary = document.createElement("td"),
+        $tableDeleteStaff = document.createElement("td"),
         $deleteButton = document.createElement("button");
         $deleteButton.classList.add('btn-close');
 
@@ -159,8 +152,7 @@ function getStaffItem(staffObj) {
 
     tableBody.append($tableRow);
 
-        // УДАЛЕНИЕ:
-
+    // УДАЛЕНИЕ:
     // присваеваем id студента кнопке:
     $deleteButton.setAttribute("id", staffObj.id);
 
@@ -170,29 +162,23 @@ function getStaffItem(staffObj) {
     });
 
     $tableRow.setAttribute("id", staffObj.id);
-    // console.log(staffObj.name);
-    // console.log($tableRow.id);
-
     return $tableRow;
 }
 
+// удаление строки таблицы
 function onDelete({ staffObj, element }) {
     if (!confirm(`Вы точно хотите удалить сотрудника ${staffObj.name} c ID № ${staffObj.id}?`)) {
       return;
     }
     element.remove();
-
-    // fetch(`http://localhost:3000/api/students/${staffObj.id}`, {
-    //   method: "DELETE",
-    // });
+    staffsListForRender = staffsListForRender.filter(x => x.id != staffObj.id);
+    renderTableOfStaff(staffsListForRender);
 }
-
-let staffsObjForRender = {};
 
 // пререндер нужен нам для обработки и обработки даннныхЖ
 // Пререндер объекта:
 function preRender(staffObj) {
-    return staffsObjForRender = {
+    return {
     id: staffObj.id,
     name: staffObj.name,
     age: +staffObj.age,
@@ -203,30 +189,25 @@ function preRender(staffObj) {
     // married: staffObj.married,
     };
 }
-let copyList =[];
 
 // запуск пререндера таблицы
 function preRenderTableOfStaff(arr) {
-
     return arr.forEach(item => {
-        preRender(item)
-        staffsListForRender.push(staffsObjForRender);
+        staffsListForRender.push(preRender(item));
     });     
 }
-preRenderTableOfStaff(copyStaffs);
+preRenderTableOfStaff(staffs);
 
 // запуск рендерa:
 function renderTableOfStaff(arr) {
     tableBody.innerHTML = ""; // очищаем тело таблицы
     let copyList = [...arr]; // создаем копию массива
 
-
     if (filterInput.value.trim() !== "") {
         copyList = filterTable(filterInput, copyList);
     }
 
-    return copyList.forEach(staffObj => {
-        preRender(staffObj)        
+    copyList.forEach(staffObj => {
         getStaffItem(staffObj)
     });     
 }
@@ -236,19 +217,15 @@ renderTableOfStaff(staffsListForRender);
 // Добавление строки с новым пользователем:
 function saveForm() {
     tableBody.innerHTML = '';
-    // modal.classList.remove('show');
-    formData = new FormData(form);
+    const formData = new FormData(form);
     data = Object.fromEntries(formData.entries());
     //присваиваем id новому сотруднику:
     data.id = Math.max.apply(null, staffsListForRender.map(a => a.id)) + 1; 
-    preRender(data);
-    staffsListForRender.push(staffsObjForRender)
+    staffsListForRender.push(preRender(data));
     renderTableOfStaff(staffsListForRender);
 }
 
 // ФИЛЬТРАЦИЯ:
-let filterdTable = [];
-
 // фильтрация массива сотрудников:
 function filterTable(filterInput, arr) {
     return arr.filter((oneStaff) =>
@@ -261,12 +238,11 @@ filterInput.addEventListener("input", () => {
 });
 
 // СОРТИРОВКА:
-
-let ageSortTableBtn = document.querySelector('[data-sort="age"]');
+const ageSortTableBtn = document.querySelector('[data-sort="age"]');
 ageSortTableBtn.style.cursor = 'pointer';
-let salarySortTableBtn = document.querySelector('[data-sort="salary"]');
+const salarySortTableBtn = document.querySelector('[data-sort="salary"]');
 salarySortTableBtn.style.cursor = 'pointer';
-let idSortTableBtn = document.querySelector('[data-sort="id"]');
+const idSortTableBtn = document.querySelector('[data-sort="id"]');
 idSortTableBtn.style.cursor = 'pointer';
 
 let sortDirection = true;
