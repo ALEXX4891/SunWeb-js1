@@ -22,27 +22,38 @@ let limit = 5;
 let offset = 0;
 staffsList(limit, offset);
 
-// const modal = document.getElementById('modal');
+const modal = document.getElementById('modal');
 const filterInput = document.getElementById('filter');
 const tableBody = document.getElementById('table-body');
-// const form = document.querySelector('form');
-// const saveBtn = document.querySelector('.save-modal');
-// const btnOpenModal = document.querySelector('.open-modal');
+const form = document.querySelector('form');
+const saveBtn = document.querySelector('.save-modal');
+const btnOpenModal = document.querySelector('.open-modal');
+// const errorLastName = document.getElementById('error-last_name');
+// const errorAge = document.getElementById('error-age');
+// const errorDate = document.getElementById('error-date');
+// const errorState = document.getElementById('error-state');
+// const errorStreet = document.getElementById('error-street');
+// const errorSkills = document.getElementById('error-skills');
 
-// saveBtn.addEventListener('click', saveForm);
-// btnOpenModal.addEventListener('click', modalToOpen);
+
+
+
+
+
+saveBtn.addEventListener('click', saveForm);
+btnOpenModal.addEventListener('click', modalToOpen);
 
 // находим кнопки закрытия модалки и навешиваем событие закрытия
-// document.querySelectorAll('[data-bs-dismiss="modal"]')
-//     .forEach(btn => { btn.addEventListener('click', modalToClose); });
+document.querySelectorAll('[data-bs-dismiss="modal"]')
+    .forEach(btn => { btn.addEventListener('click', modalToClose); });
 
-// function modalToOpen() {
-//     modal.classList.add('show');
-// }
+function modalToOpen() {
+    modal.classList.add('show');
+}
 
-// function modalToClose() {
-//     modal.classList.remove('show');
-// }
+function modalToClose() {
+    modal.classList.remove('show');
+}
 
 // получаем строку таблицы сотрудника и выводим её в таблицу:
 function getStaffItem(staffObj) {
@@ -155,15 +166,105 @@ function renderTableOfStaff(arr) {
 }
 
 // Добавление строки с новым пользователем:
-// function saveForm() {
-//     tableBody.innerHTML = '';
-//     const formData = new FormData(form);
-//     const data = Object.fromEntries(formData.entries());
-//     //присваиваем id новому сотруднику:
-//     data.id = Math.max.apply(null, staffsListForRender.map(a => a.id)) + 1; 
-//     staffsListForRender.push(preRender(data));
-//     renderTableOfStaff(staffsListForRender);
-// }
+function saveForm() {
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    
+    if (!validateFirstName() || 
+        !validateLastName() ||
+        !validateAge() ||
+        !validateDate() ||
+        !validateState() ||
+        !validateStreet() ||
+        !validateSkills()) {
+        return
+    }  
+    // ВАЛИДАЦИЯ:
+    function validateFirstName() {
+        let value = data.first_name;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-first_name').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-first_name').classList.remove('is-invalid')
+        return regEx.test(value);
+    }  
+
+    function validateLastName() {
+        let value = data.last_name;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-last_name').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-last_name').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    function validateAge() {
+        let value = data.age;
+        const regEx = /^\d{1,2}$/;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-age').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-age').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    function validateDate() {
+        let value = data.employmentAt;
+        const regEx = /\d{1,4}.\d{1,2}.\d{1,2}/;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-date').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-date').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    function validateState() {
+        let value = data.state;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-state').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-state').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    function validateStreet() {
+        let value = data.street;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/m;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-street').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-street').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    function validateSkills() {
+        let value = data.skills;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/m;
+        if (!regEx.test(value)) {
+            document.querySelector('#staff-skills').classList.add('is-invalid')
+            return
+        }
+        document.querySelector('#staff-skills').classList.remove('is-invalid')
+        return regEx.test(value);
+    }
+
+    tableBody.innerHTML = '';
+    //присваиваем id новому сотруднику:
+    data.id = Math.max.apply(null, staffsListForRender.map(a => a.id)) + 1; 
+    // console.log(data);
+    // console.log(preRender(data));
+    staffsListForRender.push(preRender(data));
+    renderTableOfStaff(staffsListForRender);    
+}
 
 // ФИЛЬТРАЦИЯ:
 // фильтрация массива сотрудников:
@@ -252,8 +353,3 @@ function createPageButtons() {
 }
 
 createPageButtons();
-
-
-
-
-
