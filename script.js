@@ -1,12 +1,12 @@
 const baseUrl = 'https://api.slingacademy.com/v1/sample-data';
 
-let responce;
+// let responce;
 let staffsListForRender = [];
 let usersFromDB;
 
 const staffsList = async function getStaffsFromDB(limit=10, offset=0) {    
     const url = `/users?offset=${offset}&limit=${limit}`;
-    responce = await fetch(baseUrl + url);
+    const responce = await fetch(baseUrl + url);
     let data = await responce.json();
     if (!responce.ok) {
         console.log("Данные на сервере отсутсуют");
@@ -213,8 +213,8 @@ salarySortTableBtn.addEventListener("click", () => {
 
 // ПАГИНАЦИЯ
 // создаем кнопки пагинации:
-let activeBtn;
 function createPageButtons() {
+    let activeBtn = 0;
     const totalPages = 10;
     const paginationContainer = document.createElement('div');
     const paginationDiv = document.body.appendChild(paginationContainer);
@@ -226,28 +226,29 @@ function createPageButtons() {
         pageButton.classList.add('page-item', 'btn');
         pageButton.textContent = i + 1;
         pageButton.addEventListener('click', () => {
-        offset = i * limit;
-        activeBtn = i;
-        tableBody.innerHTML = ""; // очищаем тело таблицы
-        staffsList(limit, offset);
-        updateActiveButtonStates();
+            offset = i * limit;
+            activeBtn = i;
+            tableBody.innerHTML = ""; // очищаем тело таблицы
+            staffsList(limit, offset);
+            updateActiveButtonStates();
         });
 
         document.body.appendChild(paginationContainer);
         paginationDiv.appendChild(pageButton);
-        }
-    }
+    }   
 
     // выделяем кнопку активной / не активной
     function updateActiveButtonStates() {
-    let pageButtons = document.querySelectorAll('.page-item');
-    pageButtons.forEach((button, index) => {
-        if (index === activeBtn) {
-        button.classList.add('active');
-        } else {
-        button.classList.remove('active');
-        }
-    });
+        let pageButtons = document.querySelectorAll('.page-item');
+        pageButtons.forEach((button, index) => {
+            if (index === activeBtn) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+        });
+    }
+    updateActiveButtonStates();
 }
 
 createPageButtons();
