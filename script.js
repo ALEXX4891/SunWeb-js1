@@ -169,20 +169,24 @@ function renderTableOfStaff(arr) {
 function saveForm() {
     const formData = new FormData(form);
     const data = Object.fromEntries(formData.entries());
+    let res = 0;
+
     
-    if (!validateFirstName() || 
-        !validateLastName() ||
-        !validateAge() ||
-        !validateDate() ||
-        !validateState() ||
-        !validateStreet() ||
-        !validateSkills()) {
+    const validation = [validateFirstName, validateLastName, validateAge, validateDate, validateState, validateStreet, validateSkills];
+    validation.map(func => {
+        const isValid = func();
+        res += isValid ? 0 : 1;
+    });
+
+
+    if (res != 0) {
         return
     }  
+ 
     // ВАЛИДАЦИЯ:
     function validateFirstName() {
         let value = data.first_name;
-        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/g;
         if (!regEx.test(value)) {
             document.querySelector('#staff-first_name').classList.add('is-invalid')
             return
@@ -193,7 +197,7 @@ function saveForm() {
 
     function validateLastName() {
         let value = data.last_name;
-        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/g;
         if (!regEx.test(value)) {
             document.querySelector('#staff-last_name').classList.add('is-invalid')
             return
@@ -226,7 +230,7 @@ function saveForm() {
 
     function validateState() {
         let value = data.state;
-        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/g;
         if (!regEx.test(value)) {
             document.querySelector('#staff-state').classList.add('is-invalid')
             return
@@ -237,7 +241,7 @@ function saveForm() {
 
     function validateStreet() {
         let value = data.street;
-        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/m;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/g;
         if (!regEx.test(value)) {
             document.querySelector('#staff-street').classList.add('is-invalid')
             return
@@ -248,7 +252,7 @@ function saveForm() {
 
     function validateSkills() {
         let value = data.skills;
-        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/m;
+        const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/g;
         if (!regEx.test(value)) {
             document.querySelector('#staff-skills').classList.add('is-invalid')
             return
