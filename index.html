@@ -29,9 +29,9 @@
             <input id="filter" class="form-control" type="text" placeholder="фильтр" aria-label="default input example">
         </div>
         <div class="col"></div>
-        <!-- <div class="col-1">
+        <div class="col-1">
             <button class="btn btn-primary open-modal">Добавить</button>
-        </div> -->
+        </div>
     </div>
     <div class="row mt-5">
         <div class="col">
@@ -83,10 +83,12 @@
                                     <div class="col">
                                         <label for="staff-first_name" class="col-form-label">Имя:</label>
                                         <input type="text" class="form-control" id="staff-first_name" name="first_name">
+                                        <span class="invalid-feedback" id="error-first_name">Ошибка</span>
                                     </div>
                                     <div class="col">
                                         <label for="staff-last_name" class="col-form-label">Фамилия:</label>
                                         <input type="text" class="form-control" id="staff-last_name" name="last_name">
+                                        <span class="invalid-feedback" id="error-last_name">Ошибка</span>
                                     </div>
                                 </div>
                             </div>
@@ -95,10 +97,13 @@
                                     <div class="col">
                                         <label for="staff-age" class="col-form-label">Возраст:</label>
                                         <input type="number" class="form-control" id="staff-age" name="age">
+                                        <span class="invalid-feedback" id="error-age">Ошибка</span>
+
                                     </div>
                                     <div class="col">
                                         <label for="staff-date" class="col-form-label">Дата:</label>
                                         <input type="date" class="form-control" id="staff-date" name="employmentAt">
+                                        <span class="invalid-feedback" id="error-date">Ошибка</span>
                                     </div>
                                 </div>
                             </div>
@@ -107,16 +112,19 @@
                                     <div class="col">
                                         <label for="staff-state" class="col-form-label">Штат:</label>
                                         <input type="text" step="100" class="form-control" id="staff-state" name="state">
+                                        <span class="invalid-feedback" id="error-state">Ошибка</span>                                        
                                     </div>
                                     <div class="col">
                                         <label for="staff-street" class="col-form-label">Улица:</label>
                                         <input type="text" class="form-control" id="staff-street" name="street">
+                                        <span class="invalid-feedback" id="error-street">Ошибка</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="mb-3">
                                 <label for="staff-skills" class="col-form-label">Навыки:</label>
                                 <textarea class="form-control" id="staff-skills" name="skills" rows="6"></textarea>
+                                <span class="invalid-feedback" id="error-skills">Ошибка</span>
                             </div>
                         </form>
                     </div>
