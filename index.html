@@ -9,9 +9,9 @@
 </head>
 <body>
 <div id="app">
-    {{ message }}
-    <div class="container">
-        <menu class="nav nav-pills mb-4">
+       <div class="container pt-5">
+           <!-- {{ filters }} -->
+        <!-- <menu class="nav nav-pills mb-4">
             <li class="nav-item">
                 <a href="index.html" class="nav-link active">Главная</a>
             </li>
@@ -24,10 +24,14 @@
             <li class="nav-item">
                 <a href="todo/todo.html" class="nav-link">Список дел</a>
             </li>
-        </menu>
+        </menu> -->
         <div class="row">
             <div class="col-6">
-                <input id="filter" class="form-control" type="text" placeholder="фильтр" aria-label="default input example" v-on:input="$emit('input', $event.target.value)">
+                <input class="form-control" 
+                v-model="filterInput" 
+                type="text" 
+                placeholder="фильтр" 
+                aria-label="default input example">
             </div>
             <div class="col"></div>
             <div class="col-1">
@@ -39,25 +43,34 @@
                 <table class="table table-sm table-striped table-hover">
                     <thead>
                         <tr>
-                            <th scope="col" data-sort="id">#</th>
-                            <th scope="col" data-sort="first_name">Имя</th>
-                            <th scope="col" data-sort="last_name">Фамилия</th>
-                            <th scope="col" data-sort="age">Возраст</th>
-                            <th scope="col" data-sort="gender">Пол</th>
-                            <th scope="col" data-sort="state">Штат</th>
-                            <th scope="col" data-sort="street">Улица</th>
+                            <th scope="col" @click="sortParam='id', sortDirection = !sortDirection">#</th>
+                            <th scope="col" @click="sortParam='first_name', sortDirection = !sortDirection">Имя</th>
+                            <th scope="col" @click="sortParam='last_name', sortDirection = !sortDirection" data-sort="last_name">Фамилия</th>
+                            <th scope="col" @click="sortParam='age', sortDirection = !sortDirection" data-sort="age">Возраст</th>
+                            <th scope="col" @click="sortParam='gender', sortDirection = !sortDirection" data-sort="gender">Пол</th>
+                            <th scope="col" @click="sortParam='state', sortDirection = !sortDirection" data-sort="state">Штат</th>
+                            <th scope="col" @click="sortParam='street', sortDirection = !sortDirection" data-sort="street">Улица</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body"></tbody>
+                    <tbody></tbody>
+                        <tr v-for="staff in filteredList" :key="staff.id">
+                            <td>{{ staff.id }}</td>
+                            <td>{{ staff.first_name }}</td>
+                            <td>{{ staff.last_name }}</td>
+                            <td>{{ staff.age }}</td>
+                            <td>{{ staff.gender }}</td>
+                            <td>{{ staff.state }}</td>
+                            <td>{{ staff.street }}</td>
+                        </tr>
                 </table>
             </div>
-        </div>
-        <div tabindex="-1" v-if="modalShow">
+        </div>        
+            <div tabindex="-1" :class="modalShow ? 'modal fade show' : 'modal fade'">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title">Новый сотрудник</h5>
-                        <button type="button" class="btn-close close-modal" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close close-modal" @click="modalShow = !modalShow" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -67,13 +80,13 @@
                                         <label class="col-form-label">Пол:</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
+                                        <input class="form-check-input" type="radio" name="gender" value="male" checked>
                                         <label class="form-check-label" for="male">
                                             Мужской
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female">
+                                        <input class="form-check-input" type="radio" name="gender" value="female">
                                         <label class="form-check-label" for="female">
                                             Женский
                                         </label>
@@ -83,13 +96,13 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-first_name" class="col-form-label">Имя:</label>
-                                            <input type="text" class="form-control" id="staff-first_name" name="first_name">
-                                            <span class="invalid-feedback" id="error-first_name">Ошибка</span>
+                                            <input type="text" class="form-control" name="first_name">
+                                            <span class="invalid-feedback" >Ошибка</span>
                                         </div>
                                         <div class="col">
                                             <label for="staff-last_name" class="col-form-label">Фамилия:</label>
-                                            <input type="text" class="form-control" id="staff-last_name" name="last_name">
-                                            <span class="invalid-feedback" id="error-last_name">Ошибка</span>
+                                            <input type="text" class="form-control" name="last_name">
+                                            <span class="invalid-feedback" >Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
@@ -97,14 +110,14 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-age" class="col-form-label">Возраст:</label>
-                                            <input type="number" class="form-control" id="staff-age" name="age">
-                                            <span class="invalid-feedback" id="error-age">Ошибка</span>
+                                            <input type="number" class="form-control" name="age">
+                                            <span class="invalid-feedback" >Ошибка</span>
     
                                         </div>
                                         <div class="col">
                                             <label for="staff-date" class="col-form-label">Дата:</label>
-                                            <input type="date" class="form-control" id="staff-date" name="employmentAt">
-                                            <span class="invalid-feedback" id="error-date">Ошибка</span>
+                                            <input type="date" class="form-control" name="employmentAt">
+                                            <span class="invalid-feedback" >Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
@@ -112,35 +125,49 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-state" class="col-form-label">Штат:</label>
-                                            <input type="text" step="100" class="form-control" id="staff-state" name="state">
-                                            <span class="invalid-feedback" id="error-state">Ошибка</span>                                        
+                                            <input type="text" step="100" class="form-control" name="state">
+                                            <span class="invalid-feedback" >Ошибка</span>                                        
                                         </div>
                                         <div class="col">
                                             <label for="staff-street" class="col-form-label">Улица:</label>
-                                            <input type="text" class="form-control" id="staff-street" name="street">
-                                            <span class="invalid-feedback" id="error-street">Ошибка</span>
+                                            <input type="text" class="form-control" name="street">
+                                            <span class="invalid-feedback">Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="staff-skills" class="col-form-label">Навыки:</label>
-                                    <textarea class="form-control" id="staff-skills" name="skills" rows="6"></textarea>
-                                    <span class="invalid-feedback" id="error-skills">Ошибка</span>
+                                    <textarea class="form-control" name="skills" rows="6"></textarea>
+                                    <span class="invalid-feedback">Ошибка</span>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary close-modal" data-bs-dismiss="modal">Отменить</button>
+                        <button type="button" class="btn btn-secondary close-modal" @click="modalShow = !modalShow" data-bs-dismiss="modal">Отменить</button>
                         <button type="button" class="btn btn-primary save-modal">Сохранить</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="pagination d-flex justify-content-center">
+        <button type="button" class="page-item btn" v-if="page != 1" @click="offset -= limit ? offset -= limit -1 : offset = 0"> << </button>
+
+        <button 
+        type="button" 
+        class="page-item btn"
+        :class="{'active': page === offset / limit +1}" 
+        v-for="page in pages.slice(offset / limit, offset / limit +6)" 
+        :key="page" 
+        @click="changePage($event)">
+            {{ page }}
+        </button>
+        <button type="button" @click="offset += limit" class="btn btn-sm btn-outline-secondary"> >> </button>
+
+    </div>
+
 </div>
-
-
 
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <script src="app.js"></script>
