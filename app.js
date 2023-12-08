@@ -8,6 +8,17 @@ var app = new Vue({
         limit: 10,
         offset: 0,
         data: {},
+        // data: {
+        //     id: '',
+        //     gender: '',
+        //     first_name: '',
+        //     last_name: '',
+        //     age: '',
+        //     employmentAt: '',
+        //     state: '',
+        //     street: '',
+        //     skills: [],
+        // },
         usersFromDB: [],
         staffsListForRender: [],
         sortDirection: true,
@@ -16,6 +27,24 @@ var app = new Vue({
         activeBtn:0,
         totalPages: 0,
         page: 0,   
+        errors  : {
+            first_name: false,
+            last_name: false,
+            age: false,
+            employmentAt: false,
+            state: false,
+            street: false,
+            skills: false, 
+        },
+        // first_name: '',
+        // last_name: '',
+        // age: '',
+        // gender: '',
+        // state: '',
+        // street: '',
+        // id: '',
+        // app.$refs.first_name.value
+        
     },
     computed: {
         sortedList: function(){
@@ -27,14 +56,14 @@ var app = new Vue({
                 return this.staffsListForRender
             }
         },
-        filteredList: function(){
-            let search = this.filterInput.toLowerCase().trim();
-            return this.sortedList.filter(function (elem) {
+        // filteredList: function(){
+        //     let search = this.filterInput.toLowerCase().trim();
+        //     return this.sortedList.filter(function (elem) {
              
-                if(search==='') return true;
-                else return elem.first_name.toLowerCase().indexOf(search) > -1;
-            })
-        },
+        //         if(search==='') return true;
+        //         else return elem.first_name.toLowerCase().indexOf(search) > -1;
+        //     })
+        // },
         pages: function(){
             let pages = [];
             for (let i = 1; i <= this.totalPages; i++) {
@@ -53,9 +82,10 @@ var app = new Vue({
     },
     methods: {
         async staffsList() {
-            let url = `/users?offset=${this.offset}&limit=${this.limit}`;                 
+            let url = `/users?offset=${this.offset}&limit=${this.limit}${this.filterInput ? `&search=${this.filterInput}` : ''}`;                 
             const responce = await fetch(this.baseUrl + url);
             let data = await responce.json();
+
             if (!responce.ok) {
                 console.log("Данные на сервере отсутсуют");
                 return null;
@@ -86,16 +116,14 @@ var app = new Vue({
                     throw new Error(`Ошибка запроса: ${response.status}`);
                 }
             })
-            .then(data => {
-                console.log(`Данные: ${data}`);
-            })
             .catch(error => {
                 console.log(`Произошла ошибка: ${error}`)
             })
         },
         saveForm() {
-            let form = document.querySelector('form');
-            let formData = new FormData(form);
+            // let formData = new FormData(document.querySelector('form'));
+            let formData = new FormData(this.$refs.form);
+
             this.data = Object.fromEntries(formData.entries());
             this.data.id = Math.max.apply(null, this.staffsListForRender.map(a => a.id)) + 1; 
             let res = 0;
@@ -116,23 +144,23 @@ var app = new Vue({
 
         validateFirstName() {
             let value = this.data.first_name;
-            const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+            const regEx = /^[А-яA-zёЁ\s-]{1,11}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-first_name').classList.add('is-invalid')
-                return
+                this.errors.first_name = true;
+                return false;
             }
-            document.querySelector('#staff-first_name').classList.remove('is-invalid')
+            this.errors.first_name = false;
             return regEx.test(value);
         },  
     
         validateLastName() {
             let value = this.data.last_name;
-            const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+            const regEx = /^[А-яA-zёЁ\s-]{1,11}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-last_name').classList.add('is-invalid')
-                return
+                this.errors.last_name = true;
+                return false;
             }
-            document.querySelector('#staff-last_name').classList.remove('is-invalid')
+            this.errors.last_name = false;
             return regEx.test(value);
         },
     
@@ -140,10 +168,10 @@ var app = new Vue({
             let value = this.data.age;
             const regEx = /^\d{1,2}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-age').classList.add('is-invalid')
-                return
+                this.errors.age = true;
+                return false;
             }
-            document.querySelector('#staff-age').classList.remove('is-invalid')
+            this.errors.age = false;
             return regEx.test(value);
         },
     
@@ -151,48 +179,48 @@ var app = new Vue({
             let value = this.data.employmentAt;
             const regEx = /\d{1,4}.\d{1,2}.\d{1,2}/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-date').classList.add('is-invalid')
-                return
+                this.errors.employmentAt = true;
+                return false;
             }
-            document.querySelector('#staff-date').classList.remove('is-invalid')
+            this.errors.employmentAt = false;
             return regEx.test(value);
         },
     
         validateState() {
             let value = this.data.state;
-            const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+            const regEx = /^[А-яA-zёЁ\s-]{1,11}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-state').classList.add('is-invalid')
-                return
+                this.errors.state = true;
+                return false;
             }
-            document.querySelector('#staff-state').classList.remove('is-invalid')
+            this.errors.state = false;
             return regEx.test(value);
         },
     
         validateStreet() {
             let value = this.data.street;
-            const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+            const regEx = /^[А-яA-zёЁ\s-]{1,11}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-street').classList.add('is-invalid')
-                return
+                this.errors.street = true;
+                return false;
             }
-            document.querySelector('#staff-street').classList.remove('is-invalid')
+            this.errors.street = false;
             return regEx.test(value);
         },
     
         validateSkills() {
             let value = this.data.skills;
-            const regEx = /^[a-zA-Zа-яА-ЯёЁ\s-]{1,11}$/;
+            const regEx = /^[А-яA-zёЁ\s-]{1,11}$/;
             if (!regEx.test(value)) {
-                document.querySelector('#staff-skills').classList.add('is-invalid')
-                return
+                this.errors.skills = true;
+                return false;
             }
-            document.querySelector('#staff-skills').classList.remove('is-invalid')
+            this.errors.skills = false;
             return regEx.test(value);
         },
 
         sortArr(arr) {
-            return arr.sort((a, b) =>
+            return [...arr].sort((a, b) =>
               (this.sortDirection ? a[this.sortParam] < b[this.sortParam] : a[this.sortParam] > b[this.sortParam])
                 ? -1
                 : 1
@@ -219,13 +247,6 @@ var app = new Vue({
             street: staffObj.street,
             };
         },
-        filterTable(filterInput, arr) {
-            return arr.filter((oneStaff) =>
-            oneStaff['first_name']
-            .toLowerCase()
-            .includes(filterInput.trim().toLowerCase())
-            );
-        },
         changePage(e) {
             this.offset = (e.target.textContent - 1) * this.limit;
         }
@@ -234,6 +255,10 @@ var app = new Vue({
     watch: {
         offset: function () {
             this.staffsList()
+        },
+
+        filterInput: function(){
+            this.staffsList();
         }
     },
 
