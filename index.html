@@ -61,6 +61,8 @@
                             <td>{{ staff.gender }}</td>
                             <td>{{ staff.state }}</td>
                             <td>{{ staff.street }}</td>
+                            <td><button class="btn-close" @click="deleteStaff(staff)"></button></td>
+
                         </tr>
                 </table>
             </div>
@@ -80,13 +82,13 @@
                                         <label class="col-form-label">Пол:</label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="gender" value="male" checked>
+                                        <input class="form-check-input" type="radio" name="gender" id="male" value="male" checked>
                                         <label class="form-check-label" for="male">
                                             Мужской
                                         </label>
                                     </div>
                                     <div class="form-check form-check-inline">
-                                        <input class="form-check-input" type="radio" name="gender" value="female">
+                                        <input class="form-check-input" type="radio" name="gender" id="female" value="female">
                                         <label class="form-check-label" for="female">
                                             Женский
                                         </label>
@@ -96,13 +98,13 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-first_name" class="col-form-label">Имя:</label>
-                                            <input type="text" class="form-control" name="first_name">
-                                            <span class="invalid-feedback" >Ошибка</span>
+                                            <input type="text" class="form-control" id="staff-first_name" name="first_name">
+                                            <span class="invalid-feedback" id="error-first_name">Ошибка</span>
                                         </div>
                                         <div class="col">
                                             <label for="staff-last_name" class="col-form-label">Фамилия:</label>
-                                            <input type="text" class="form-control" name="last_name">
-                                            <span class="invalid-feedback" >Ошибка</span>
+                                            <input type="text" class="form-control" id="staff-last_name" name="last_name">
+                                            <span class="invalid-feedback" id="error-last_name">Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
@@ -110,14 +112,14 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-age" class="col-form-label">Возраст:</label>
-                                            <input type="number" class="form-control" name="age">
-                                            <span class="invalid-feedback" >Ошибка</span>
+                                            <input type="number" class="form-control" id="staff-age" name="age">
+                                            <span class="invalid-feedback" id="error-age">Ошибка</span>
     
                                         </div>
                                         <div class="col">
                                             <label for="staff-date" class="col-form-label">Дата:</label>
-                                            <input type="date" class="form-control" name="employmentAt">
-                                            <span class="invalid-feedback" >Ошибка</span>
+                                            <input type="date" class="form-control" id="staff-date" name="employmentAt">
+                                            <span class="invalid-feedback" id="error-date">Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
@@ -125,34 +127,34 @@
                                     <div class="row">
                                         <div class="col">
                                             <label for="staff-state" class="col-form-label">Штат:</label>
-                                            <input type="text" step="100" class="form-control" name="state">
-                                            <span class="invalid-feedback" >Ошибка</span>                                        
+                                            <input type="text" step="100" class="form-control" id="staff-state" name="state">
+                                            <span class="invalid-feedback" id="error-state">Ошибка</span>                                        
                                         </div>
                                         <div class="col">
                                             <label for="staff-street" class="col-form-label">Улица:</label>
-                                            <input type="text" class="form-control" name="street">
-                                            <span class="invalid-feedback">Ошибка</span>
+                                            <input type="text" class="form-control" id="staff-street" name="street">
+                                            <span class="invalid-feedback" id="error-street">Ошибка</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="staff-skills" class="col-form-label">Навыки:</label>
-                                    <textarea class="form-control" name="skills" rows="6"></textarea>
-                                    <span class="invalid-feedback">Ошибка</span>
+                                    <textarea class="form-control" id="staff-skills" name="skills" rows="6"></textarea>
+                                    <span class="invalid-feedback" id="error-skills">Ошибка</span>
                                 </div>
                             </form>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary close-modal" @click="modalShow = !modalShow" data-bs-dismiss="modal">Отменить</button>
-                        <button type="button" class="btn btn-primary save-modal">Сохранить</button>
+                        <button type="button" class="btn btn-primary save-modal" @click="saveForm()">Сохранить</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="pagination d-flex justify-content-center">
-        <button type="button" class="page-item btn" v-if="page != 1" @click="offset -= limit ? offset -= limit -1 : offset = 0"> << </button>
+        <button type="button" class="page-item btn" v-if="offset != 0" @click="offset - limit >= 0 ? offset -= limit : offset = 0"> << </button>
 
         <button 
         type="button" 
