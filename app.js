@@ -191,7 +191,7 @@ var app = new Vue({
             );
         },
         preRenderTableOfStaff(arr) {
-            return [...arr].forEach(item => {
+            arr.forEach(item => {
                 this.staffsListForRender.push(this.preRender(item));
             });     
         },
