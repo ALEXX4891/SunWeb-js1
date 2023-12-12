@@ -7,26 +7,14 @@ var app = new Vue({
         filterInput: '',
         limit: 10,
         offset: 0,
-        data: {},
-        // data: {
-        //     id: '',
-        //     gender: '',
-        //     first_name: '',
-        //     last_name: '',
-        //     age: '',
-        //     employmentAt: '',
-        //     state: '',
-        //     street: '',
-        //     skills: [],
-        // },
-        usersFromDB: [],
+        data: [],
         staffsListForRender: [],
         sortDirection: true,
         sortParam: '',
         baseUrl: 'https://api.slingacademy.com/v1/sample-data',
         activeBtn:0,
         totalPages: 0,
-        page: 0,   
+        page: 0,    
         errors  : {
             first_name: false,
             last_name: false,
@@ -35,16 +23,7 @@ var app = new Vue({
             state: false,
             street: false,
             skills: false, 
-        },
-        // first_name: '',
-        // last_name: '',
-        // age: '',
-        // gender: '',
-        // state: '',
-        // street: '',
-        // id: '',
-        // app.$refs.first_name.value
-        
+        },  
     },
     computed: {
         sortedList: function(){
@@ -56,53 +35,39 @@ var app = new Vue({
                 return this.staffsListForRender
             }
         },
-        // filteredList: function(){
-        //     let search = this.filterInput.toLowerCase().trim();
-        //     return this.sortedList.filter(function (elem) {
-             
-        //         if(search==='') return true;
-        //         else return elem.first_name.toLowerCase().indexOf(search) > -1;
-        //     })
-        // },
         pages: function(){
             let pages = [];
             for (let i = 1; i <= this.totalPages; i++) {
                 pages.push(i);
             }
             return pages
-        }    
-        
-        
+        },  
     },
     created () {
             this.staffsList();
 	},
-
-    mounted() {
-    },
     methods: {
         async staffsList() {
             let url = `/users?offset=${this.offset}&limit=${this.limit}${this.filterInput ? `&search=${this.filterInput}` : ''}`;                 
             const responce = await fetch(this.baseUrl + url);
-            let data = await responce.json();
+            this.data = await responce.json();
 
             if (!responce.ok) {
                 console.log("Данные на сервере отсутсуют");
                 return null;
             } 
-            this.totalPages = data.total_users / this.limit;
+            this.totalPages = Math.ceil(this.data.total_users / this.limit);
             this.staffsListForRender = [];
-            this.usersFromDB = [...data.users];
-            this.preRenderTableOfStaff(this.usersFromDB);
+            this.preRenderTableOfStaff([...this.data.users]);
 
         },
         deleteStaff(staffObj) {
-            if (!confirm(`Вы точно хотите удалить сотрудника ${staffObj.first_name} c ID № ${staffObj.id}?`)) {
-              return;
+            if (confirm(`Вы точно хотите удалить сотрудника ${staffObj.first_name} c ID № ${staffObj.id}?`)) {
+                this.staffsListForRender = this.staffsListForRender.filter(x => x.id != staffObj.id);
+            } else {
+                console.log(`Произошла ошибка`)
+                return;
             }
-            // element.remove();
-            this.staffsListForRender = this.staffsListForRender.filter(x => x.id != staffObj.id);
-            // renderTableOfStaff(staffsListForRender);
         
             fetch(`https://jsonplaceholder.typicode.com/posts/${staffObj.id}`, {
                 method: "DELETE",
@@ -121,8 +86,7 @@ var app = new Vue({
             })
         },
         saveForm() {
-            // let formData = new FormData(document.querySelector('form'));
-            let formData = new FormData(this.$refs.form);
+            const formData = new FormData(this.$refs.form);
 
             this.data = Object.fromEntries(formData.entries());
             this.data.id = Math.max.apply(null, this.staffsListForRender.map(a => a.id)) + 1; 
@@ -139,7 +103,7 @@ var app = new Vue({
                 return
             }
          
-            this.staffsListForRender.push(this.preRender(this.data));
+            this.staffsListForRender = [...this.staffsListForRender, this.data];
         },
 
         validateFirstName() {
@@ -227,7 +191,7 @@ var app = new Vue({
             );
         },
         preRenderTableOfStaff(arr) {
-            return arr.forEach(item => {
+            return [...arr].forEach(item => {
                 this.staffsListForRender.push(this.preRender(item));
             });     
         },
@@ -241,7 +205,6 @@ var app = new Vue({
                 new Date().
                 getFullYear() - new Date(staffObj.date_of_birth).
                 getFullYear(),
-            // age: staffObj.age,
             gender: staffObj.gender,
             state: staffObj.state,
             street: staffObj.street,
@@ -250,7 +213,6 @@ var app = new Vue({
         changePage(e) {
             this.offset = (e.target.textContent - 1) * this.limit;
         }
-
     },
     watch: {
         offset: function () {
@@ -261,6 +223,4 @@ var app = new Vue({
             this.staffsList();
         }
     },
-
-    
 })

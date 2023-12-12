@@ -67,7 +67,6 @@
                 </table>
             </div>
         </div>        
-        <!-- <div tabindex="-1" :class="modalShow ? 'modal fade show' : 'modal fade'"> -->
             <div tabindex="-1" class="modal fade" :class="{ 'show': modalShow }">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -157,15 +156,29 @@
         </div>
     </div>
     <div class="pagination d-flex justify-content-center">
-        <button type="button" class="page-item btn" v-if="offset != 0" @click="offset - limit >= 0 ? offset -= limit : offset = 0"> << </button>
+        <button type="button" class="page-item btn" @click="offset - limit >= 0 ? offset -= limit : offset = 0"> << </button>
 
         <button 
         type="button" 
         class="page-item btn"
         :class="{'active': page === offset / limit +1}" 
-        v-for="page in pages.slice(offset / limit, offset / limit +6)" 
+        v-if="offset >= 50"
+        v-for="page in pages.slice(offset / limit - 2, offset / limit + 3)"
         :key="page" 
-        @click="changePage($event)">
+        @click="changePage($event)"
+        >
+            {{ page }}
+        </button>
+
+        <button 
+        type="button" 
+        class="page-item btn"
+        :class="{'active': page === offset / limit +1}" 
+        v-if="offset < 50"
+        v-for="page in pages.slice(0, 5)"
+        :key="page" 
+        @click="changePage($event)"
+        >
             {{ page }}
         </button>
         <button type="button" @click="offset += limit" class="btn btn-sm btn-outline-secondary"> >> </button>
